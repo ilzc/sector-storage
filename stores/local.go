@@ -251,24 +251,28 @@ func (st *Local) AcquireSector(ctx context.Context, sid abi.SectorID, spt abi.Re
 
 		for _, si := range sis {
 			p, ok := st.paths[si.ID]
+			log.Debugf("checking path")
 			if !ok {
 				continue
 			}
-
+			log.Debugf("current path:", p.local)
 			if p.local == "" { // TODO: can that even be the case?
+				log.Warnf("local empty")
 				continue
 			}
 
 			if sealing && !si.CanSeal {
+				log.Warnf("local path can't seal")
 				continue
 			}
 
 			if !sealing && !si.CanStore {
+				log.Warnf("local path can't seal")
 				continue
 			}
 
 			// TODO: Check free space
-
+			log.Debugf("best path", p.local)
 			best = filepath.Join(p.local, fileType.String(), SectorName(sid))
 			bestID = si.ID
 		}
